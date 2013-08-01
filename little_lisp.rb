@@ -46,10 +46,9 @@ SPECIAL = {
   'lambda' => proc do |input, context|
     proc do |*args|
       lambdaArguments = args.flatten
-      lambdaScope = input[1].to_enum.with_index.inject({}) do |acc, x_i|
-        i = x_i[1]
-        acc[x_i[0][:value]] = lambdaArguments[i]
-        acc
+      lambdaScope = {}
+      input[1].to_enum.with_index.each do |x, i|
+        lambdaScope[x[:value]] = lambdaArguments[i]
       end
       interpret(input[2], Context.new(lambdaScope, context))
     end

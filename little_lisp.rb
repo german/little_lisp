@@ -13,7 +13,7 @@ class Context
   end
 end
 
-class LittleRuby
+class LittleLisp
   def interpret input
     _interpret(parenthesize(tokenize(input)))
   end
@@ -85,19 +85,26 @@ private
         end
         this._interpret(input[2], Context.new(lambdaScope, context))
       end
+    end,
+    '>' => proc do |this, input, context|
+      this._interpret(input[1], context) > this._interpret(input[2], context)
+    end,
+    '<' => proc do |this, input, context|
+      this._interpret(input[1], context) < this._interpret(input[2], context)
+    end,
+    'if' => proc do |this, input, context|
+      if this._interpret(input[1], context)
+        this._interpret(input[2], context)
+      else
+        this._interpret(input[3], context)
+      end
     end
   }
 
   ['+', '*'].each do |operator|
     SPECIAL.merge!({operator => proc do |this, input, context|
       input[1..-1].inject([]) do |sum, x| 
-        sum << if x.is_a?(Array)
-          this._interpretList(x, context)
-        elsif x[:type] === "identifier"
-          context.get(x[:value])
-        elsif x[:type] === "literal"
-          x[:value]
-        end
+        sum << this._interpret(x, context)
       end.inject(operator)
     end})
   end

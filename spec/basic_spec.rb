@@ -20,4 +20,8 @@ describe LittleRuby do
     @lri.interpret( '((lambda(x y) (* x (+ 2 y))) 2 5)' ).should == 14.0
     @lri.interpret( '((lambda(x y) (+ x (* 2 y))) 2 5)' ).should == 12.0
   end
+
+  it "has `if` control structure" do
+    @lri.interpret( '(if (> 10 1) 10 1)' ).should == 10.0
+  end
 end
